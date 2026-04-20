@@ -135,11 +135,18 @@ You can exclude certain languages so they don't appear in the languages section 
 
 6. **Open [http://localhost:3000](http://localhost:3000)**
 
+### Deploy to Diploi
+
+[![launch with diploi button](https://diploi.com/launch-big.svg)](https://diploi.com/launch/nishatrhythm/GitHub-Insights)
+
+**Important:** In Diploi, open **Deployment Page -> Options -> Next.js -> Environment** and add the `GITHUB_TOKEN` environment variable.
+
 ### Deploy to Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nishatrhythm/GitHub-Insights&env=GITHUB_TOKEN)
 
 **Important:** Add the `GITHUB_TOKEN` environment variable in your Vercel project settings.
+
 
 ## Tech Stack
 
