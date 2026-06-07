@@ -56,18 +56,13 @@ const Icons = {
 const themes = [
   { id: 'github_light', name: 'GitHub Light', bgColor: '#f6f8fa', accentColor: '#0969da', textColor: '#24292f',},
   { id: 'github_dark', name: 'GitHub Dark', bgColor: '#0d1117', accentColor: '#238636', textColor: '#e6edf3' },
-  { id: 'radical', name: 'Radical', bgColor: '#141321', accentColor: '#fe428e', textColor: '#a9fef7' },
+  { id: 'radical', name: 'Radical', bgColor: '#141321', accentColor: '#f8d847', textColor: '#a9fef7' },
   { id: 'tokyonight', name: 'Tokyo Night', bgColor: '#1a1b26', accentColor: '#70a5fd', textColor: '#38bdae' },
   { id: 'dracula', name: 'Dracula', bgColor: '#282a36', accentColor: '#ff79c6', textColor: '#f8f8f2' },
   { id: 'synthwave', name: 'Synthwave', bgColor: '#2b213a', accentColor: '#e2571e', textColor: '#e5289e' },
   { id: 'ocean', name: 'Ocean', bgColor: '#0a192f', accentColor: '#64ffda', textColor: '#8892b0' },
-   { 
-  id: 'neo_green', 
-  name: 'Neo Green', 
-  bgColor: '#121212',       // VS Code-like dark background
-  accentColor: '#00c875',   // soft green highlight
-  textColor: '#a6e22e',     // readable muted green for text
-},
+  { id: 'ocean_radical', name: 'Ocean Radical', bgColor: '#050b14', accentColor: '#fe428e', textColor: '#ccd6f6' },
+   { id: 'neo_green', name: 'Neo Green', bgColor: '#121212', accentColor: '#00c875', textColor: '#a6e22e'},
 ];
 
 // GitHub's exact dark mode colors
