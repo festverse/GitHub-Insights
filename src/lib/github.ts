@@ -43,7 +43,7 @@ interface RepositoryWithLanguages {
   } | null;
 }
 
-const USER_QUERY = `
+const USER_PROFILE_QUERY = `
 query($username: String!) {
   user(login: $username) {
     login
@@ -51,13 +51,23 @@ query($username: String!) {
     location
     followers { totalCount }
     createdAt
-    repositories(first: 10, ownerAffiliations: OWNER, orderBy: {field: STARGAZERS, direction: DESC}, privacy: PUBLIC) {
+    pullRequests(first: 1) {
+      totalCount
+    }
+  }
+}
+`;
+
+const USER_REPOS_QUERY = `
+query($username: String!) {
+  user(login: $username) {
+    repositories(first: 50, ownerAffiliations: OWNER, orderBy: {field: STARGAZERS, direction: DESC}, privacy: PUBLIC) {
       totalCount
       nodes {
         stargazerCount
         forkCount
         isFork
-        languages(first: 5, orderBy: {field: SIZE, direction: DESC}) {
+        languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
           edges {
             size
             node {
@@ -68,9 +78,13 @@ query($username: String!) {
         }
       }
     }
-    pullRequests(first: 1) {
-      totalCount
-    }
+  }
+}
+`;
+
+const USER_CONTRIBUTIONS_QUERY = `
+query($username: String!) {
+  user(login: $username) {
     contributionsCollection {
       totalCommitContributions
       totalIssueContributions
@@ -529,34 +543,43 @@ export async function fetchGitHubStats(username: string, hiddenLanguages: string
   const timeoutId = setTimeout(() => controller.abort(), 8000);
 
   try {
-    // Fetch main user data
-    const response = await fetch(GITHUB_GRAPHQL_API, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: USER_QUERY,
-        variables: { username },
-      }),
-      signal: controller.signal,
-    });
+    // Fetch data in parallel to avoid timeouts
+    const fetchQuery = async (query: string) => {
+      const res = await fetch(GITHUB_GRAPHQL_API, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query, variables: { username } }),
+        signal: controller.signal,
+      });
+      const data = await res.json();
+      if (data.errors) {
+        console.error('GraphQL errors:', data.errors);
+        throw new Error(data.errors[0]?.message || 'Failed to fetch GitHub data');
+      }
+      return data;
+    };
+
+    const [profileData, reposData, contributionsData] = await Promise.all([
+      fetchQuery(USER_PROFILE_QUERY),
+      fetchQuery(USER_REPOS_QUERY),
+      fetchQuery(USER_CONTRIBUTIONS_QUERY)
+    ]);
 
     clearTimeout(timeoutId);
 
-    const data = await response.json();
-
-    if (data.errors) {
-      console.error('GraphQL errors:', data.errors);
-      throw new Error(data.errors[0]?.message || 'Failed to fetch GitHub data');
-    }
-
-    if (!data.data?.user) {
+    if (!profileData.data?.user) {
       throw new Error(`User "${username}" not found`);
     }
 
-    const user: GitHubUser = data.data.user;
+    // Combine the data back into a single user object
+    const user = {
+      ...profileData.data.user,
+      repositories: reposData.data.user.repositories,
+      contributionsCollection: contributionsData.data.user.contributionsCollection
+    } as GitHubUser;
 
     // Calculate totals
     const totalStars = user.repositories.nodes.reduce((sum, repo) => sum + repo.stargazerCount, 0);
