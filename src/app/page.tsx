@@ -1164,7 +1164,7 @@ export default function Home() {
                         color: colors.dangerFg,
                         fontFamily,
                       }}>
-                        User not found
+                        Error generating card
                       </div>
                     </div>
                     <div style={{
@@ -1173,8 +1173,8 @@ export default function Home() {
                       fontFamily,
                       lineHeight: 1.5,
                     }}>
-                      The username &quot;<strong style={{ color: colors.fgDefault }}>{generatedUsername}</strong>&quot; does not exist on GitHub.
-                      <br />Please check the spelling and try again.
+                      We couldn't generate stats for &quot;<strong style={{ color: colors.fgDefault }}>{generatedUsername}</strong>&quot;.
+                      <br />The username might not exist, or the API rate limit was exceeded.
                     </div>
                   </div>
                 ) : (
